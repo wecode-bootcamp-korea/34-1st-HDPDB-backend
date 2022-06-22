@@ -4,22 +4,22 @@ from django.db import models
 from users.models import User
 
 
-class Main_Category(models.Model):
+class MainCategory(models.Model):
     name = models.CharField(max_length=45)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'main_categories'
+        db_table = 'maincategories'
 
-class Sub_Category(models.Model):
+class SubCategory(models.Model):
     name = models.CharField(max_length=45)
-    main_category_id = models.ForeignKey(Main_Category, on_delete=models.CASCADE)
+    main_category_id = models.ForeignKey(MainCategory, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
         
     class Meta:
-        db_table = 'sub_categories'
+        db_table = 'subcategories'
 
 class Featured(models.Model):
     event_name = models.CharField(max_length=200)
@@ -43,9 +43,9 @@ class Discription(models.Model):
 class Product(models.Model):
     sku = models.CharField(max_length=50, unique=True) 
     name = models.CharField(max_length=100, unique=True)
-    sub_category_id = models.ForeignKey(Sub_Category, on_delete=models.CASCADE)
-    product_code = models.IntegerField(max_length=10, unique=True)
-    thumbnail_image_url = models.URLField(Null = True)
+    sub_category_id = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
+    product_code = models.IntegerField(unique=True)
+    thumbnail_image_url = models.URLField(null = True)
     maker = models.CharField(max_length=30)
     option = models.CharField(max_length=50)
     description = models.ForeignKey(Discription, on_delete=models.CASCADE)
@@ -57,23 +57,23 @@ class Product(models.Model):
     class Meta:
         db_table = 'products'
 
-class Featured_Products(models.Model):
+class FeaturedProducts(models.Model):
     featured_id = models.ForeignKey(Featured, on_delete=models.CASCADE)
     product_code_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'featured_products'
+        db_table = 'featuredproducts'
 
 class Discount(models.Model):
     sku = models.ForeignKey(Product, on_delete=models.CASCADE)
     activated = models.BooleanField(default=False)
     name = models.CharField(max_length=50)
-    date_start = models.DateTimeField(Null = True)
-    date_end = models.DateTimeField(Null=True)
-    percent = models.IntegerField(Null=True)
-    discount_price = models.IntegerField(Null=True)
+    date_start = models.DateTimeField(null = True)
+    date_end = models.DateTimeField(null=True)
+    percent = models.IntegerField(null=True)
+    discount_price = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
         
