@@ -63,7 +63,7 @@ class FeaturedProducts(models.Model):
 class Discount(TimestampZone):
     activated      = models.BooleanField(default=False)
     name           = models.CharField(max_length=50)
-    date_start     = models.DateTimeField(null = True)
+    date_start     = models.DateTimeField(null=True)
     date_end       = models.DateTimeField(null=True)
     percent        = models.IntegerField(null=True)
     discount_price = models.IntegerField(null=True)
@@ -76,7 +76,7 @@ class DiscountProduct(models.Model):
     product  = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "discount_products"
+        db_table = 'discount_products'
 
 
 class Cart(TimestampZone):
