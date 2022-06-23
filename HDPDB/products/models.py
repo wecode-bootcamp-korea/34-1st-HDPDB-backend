@@ -10,16 +10,16 @@ class MainCategory(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'maincategories'
+        db_table = 'main_categories'
 
 class SubCategory(models.Model):
     name = models.CharField(max_length=45)
-    main_category_id = models.ForeignKey(MainCategory, on_delete=models.CASCADE)
+    main_category = models.ForeignKey(MainCategory, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
         
     class Meta:
-        db_table = 'subcategories'
+        db_table = 'sub_categories'
 
 class Featured(models.Model):
     event_name = models.CharField(max_length=200)
@@ -43,7 +43,7 @@ class Discription(models.Model):
 class Product(models.Model):
     sku = models.CharField(max_length=50, unique=True) 
     name = models.CharField(max_length=100, unique=True)
-    sub_category_id = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
+    sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     product_code = models.IntegerField(unique=True)
     thumbnail_image_url = models.URLField(null = True)
     maker = models.CharField(max_length=30)
@@ -58,13 +58,13 @@ class Product(models.Model):
         db_table = 'products'
 
 class FeaturedProducts(models.Model):
-    featured_id = models.ForeignKey(Featured, on_delete=models.CASCADE)
-    product_code_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    featured = models.ForeignKey(Featured, on_delete=models.CASCADE)
+    product_code = models.ForeignKey(Product, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'featuredproducts'
+        db_table = 'featured_products'
 
 class Discount(models.Model):
     sku = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -82,7 +82,7 @@ class Discount(models.Model):
 
 
 class Cart(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     sku = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=0)
     total_price = models.IntegerField(default=0)
