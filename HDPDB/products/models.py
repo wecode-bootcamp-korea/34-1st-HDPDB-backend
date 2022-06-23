@@ -17,12 +17,6 @@ class SubCategory(models.Model):
     class Meta:
         db_table = 'sub_categories'
 
-class Featured(TimestampZone):
-    event_name = models.CharField(max_length=200)
-
-    class Meta:
-        db_table = 'features'
-
 class OriginProduct(TimestampZone):
     name                = models.CharField(max_length=100, unique=True)
     sub_category        = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
@@ -39,26 +33,25 @@ class Product(TimestampZone):
     origin_product = models.ForeignKey(OriginProduct, on_delete=models.CASCADE)
     sku            = models.CharField(max_length=50, unique=True)
     maker          = models.CharField(max_length=30)
-    option         = models.CharField(max_length=50)
     stock          = models.IntegerField(default=0)
     price          = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'products'
 
-class ProductImage(TimestampZone):
-    url     = models.CharField(max_length=1000)
+class Option(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    type = models.CharField(max_length=50)
+    class Meta:
+        db_table = 'options'
+
+class ProductImage(TimestampZone):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    url     = models.CharField(max_length=1000)
 
     class Meta:
         db_table = 'product_images'
-
-class FeaturedProducts(models.Model):
-    featured       = models.ForeignKey(Featured, on_delete=models.CASCADE)
-    product_origin = models.ForeignKey(OriginProduct, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = 'featured_products'
 
 class Discount(TimestampZone):
     activated      = models.BooleanField(default=False)
