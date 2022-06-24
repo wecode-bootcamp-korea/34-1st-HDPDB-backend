@@ -1,3 +1,4 @@
+from tkinter import CASCADE
 from django.db import models
 
 from users.models import User
@@ -24,27 +25,28 @@ class OriginProduct(TimestampZone):
     created_at          = models.DateTimeField(auto_now_add=True)
     updated_at          = models.DateTimeField(auto_now=True)
     overview            = models.CharField(max_length=350)
-    detail              = models.TextField()
+    detail              = models.TextField(null=True)
+    maker               = models.CharField(max_length=30)
 
     class Meta:
         db_table = 'origin_products'
 
 class Product(TimestampZone):
     origin_product = models.ForeignKey(OriginProduct, on_delete=models.CASCADE)
-    sku            = models.CharField(max_length=50, unique=True)
-    maker          = models.CharField(max_length=30)
     stock          = models.IntegerField(default=0)
     price          = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'products'
 
-class Option(models.Model):
+class ProductOption(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     type = models.CharField(max_length=50)
+    stock          = models.IntegerField(default=0)
+    price          = models.IntegerField(default=0)
     class Meta:
-        db_table = 'options'
+        db_table = 'product_options'
 
 class ProductImage(TimestampZone):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -73,10 +75,10 @@ class DiscountProduct(models.Model):
 
 
 class Cart(TimestampZone):
-    user        = models.ForeignKey(User, on_delete=models.CASCADE)
-    product     = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity    = models.IntegerField(default=0)
-    total_price = models.IntegerField(default=0)
+    user             = models.ForeignKey(User, on_delete=models.CASCADE)
+    product          = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity         = models.IntegerField(default=0)
+    total_price      = models.IntegerField(default=0)
         
     class Meta:
         db_table = 'carts'

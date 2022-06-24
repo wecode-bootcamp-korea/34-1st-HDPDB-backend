@@ -1,0 +1,35 @@
+﻿id,products_id,name,type
+1,7,Keycap Kit,CYBERDECK
+2,8,Keycap Kit,BLOCKNET
+3,9,Keycap Kit,EXTRAS
+4,10,Keycap Kit,GAIJIN
+5,11,Keycap Kit,ISO
+6,12,Keycap Kit,KOBE
+7,13,Keycap Kit,NOVELTIES
+8,14,Keycap Kit,BARS
+9,15,Keycap Kit,SYNTHWAVE
+10,16,Keycap Kit,TURBO
+11,17,Case Color,Black
+12,17,Switch Type,Halo Clear (65g tactile)
+13,18,Case Color,Black
+14,18,Switch Type,Halo Ture (60g Tactile)
+15,19,Case Color,Black
+16,19,Switch Type,Kaihua Box White (Clicky)
+17,20,Case Color,Black
+18,20,Switch Type,Kaihua Speed Sliver (Linear)
+19,21,Case Color,Black
+20,21,Switch Type,Cherry MX Blue RGB (Clicky)
+21,22,Case Color,Black
+22,22,Switch Type,Cherry MX Brown RGB (Tactile)
+23,23,Case Color,Black
+24,23,Switch Type,Halo Clear (65g tactile)
+25,24,Case Color,Space Gray
+26,24,Switch Type,Halo Ture (60g Tactile)
+27,25,Case Color,Space Gray
+28,25,Switch Type,Kaihua Box White (Clicky)
+29,26,Case Color,Space Gray
+30,26,Switch Type,Kaihua Speed Sliver (Linear)
+31,27,Case Color,Space Gray
+32,27,Switch Type,Cherry MX Blue RGB (Clicky)
+33,28,Case Color,Space Gray
+34,28,Switch Type,Cherry MX Brown RGB (Tactile)
