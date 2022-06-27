@@ -27,6 +27,9 @@ class OriginProduct(TimestampZone):
     overview            = models.CharField(max_length=350)
     detail              = models.TextField(null=True)
     maker               = models.CharField(max_length=30)
+    rate_count          = models.IntegerField(null=True)
+    review_count        = models.IntegerField(null=True)
+    sold_count          = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'origin_products'
@@ -41,10 +44,10 @@ class Product(TimestampZone):
 
 class ProductOption(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    type = models.CharField(max_length=50)
-    stock          = models.IntegerField(default=0)
-    price          = models.IntegerField(default=0)
+    name    = models.CharField(max_length=50)
+    type    = models.CharField(max_length=50)
+    stock   = models.IntegerField(default=0)
+    price   = models.IntegerField(default=0)
     class Meta:
         db_table = 'product_options'
 
@@ -75,10 +78,10 @@ class DiscountProduct(models.Model):
 
 
 class Cart(TimestampZone):
-    user             = models.ForeignKey(User, on_delete=models.CASCADE)
-    product          = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity         = models.IntegerField(default=0)
-    total_price      = models.IntegerField(default=0)
+    user        = models.ForeignKey(User, on_delete=models.CASCADE)
+    product     = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity    = models.IntegerField(default=0)
+    total_price = models.IntegerField(default=0)
         
     class Meta:
         db_table = 'carts'
