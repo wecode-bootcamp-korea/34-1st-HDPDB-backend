@@ -18,12 +18,10 @@ class SubCategory(models.Model):
     class Meta:
         db_table = 'sub_categories'
 
-class OriginProduct(TimestampZone):
+class OriginProduct(models.Model):
     name                = models.CharField(max_length=100, unique=True)
     sub_category        = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     thumbnail_image_url = models.URLField(null = True)
-    created_at          = models.DateTimeField(auto_now_add=True)
-    updated_at          = models.DateTimeField(auto_now=True)
     overview            = models.CharField(max_length=350)
     detail              = models.TextField(null=True)
     maker               = models.CharField(max_length=30)
@@ -34,7 +32,7 @@ class OriginProduct(TimestampZone):
     class Meta:
         db_table = 'origin_products'
 
-class Product(TimestampZone):
+class Product(models.Model):
     origin_product = models.ForeignKey(OriginProduct, on_delete=models.CASCADE)
     stock          = models.IntegerField(default=0)
     price          = models.IntegerField(default=0)
@@ -51,14 +49,14 @@ class ProductOption(models.Model):
     class Meta:
         db_table = 'product_options'
 
-class ProductImage(TimestampZone):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+class ProductImage(models.Model):
+    origin_product = models.ForeignKey(OriginProduct, on_delete=models.CASCADE)
     url     = models.CharField(max_length=1000)
 
     class Meta:
         db_table = 'product_images'
 
-class Discount(TimestampZone):
+class Discount(models.Model):
     activated      = models.BooleanField(default=False)
     name           = models.CharField(max_length=50)
     date_start     = models.DateTimeField(null=True)
