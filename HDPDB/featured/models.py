@@ -1,15 +1,15 @@
 from django.db import models
-from core.utils import TimestampZone
 from products.models import OriginProduct
 
-class Featured(TimestampZone):
-    event_name = models.CharField(max_length=200)
+class FeaturedName(models.Model):
+    name = models.CharField(max_length=200)
+    space_name = models.CharField(max_length=100)
     
     class Meta:
-        db_table = 'features'
+        db_table = 'featured_names'
 
 class FeaturedProducts(models.Model):
-    featured       = models.ForeignKey(Featured, on_delete=models.CASCADE)
+    featured       = models.ForeignKey(FeaturedName, on_delete=models.CASCADE)
     product_origin = models.ForeignKey(OriginProduct, on_delete=models.CASCADE)
 
     class Meta:

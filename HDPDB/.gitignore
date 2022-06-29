@@ -748,3 +748,5 @@ my_settings.py
 db_upload_csv.py
 
 csv/
+
+test.py
