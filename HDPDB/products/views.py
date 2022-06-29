@@ -37,66 +37,61 @@ class ProductGroupView(View):
 
         return JsonResponse({"result": result}, status=200)
 
-class MainPageView(View):
+
+class ProductGroupListView(View):
     def get(self, request, **kwargs):
+        # GET :8000/product_groups?main_category_id=1 (Audiophile) O
+        # GET :8000/product_groups?featured_id=1
+        # GET :8000/product_groups?main_category_id=1&featured_id=1
+
+        main_category_id = int(request.GET.get('main_category_id'))
+        featured_id = int(request.GET.get('featured_id'))
         
-        
-        
-        if 'main_category' in kwargs.keys() :
-            kwargs_value = kwargs['main_category']
-            main_category = MainCategory.objects.get(name = kwargs_value)
-            sub_category_id_main_category = SubCategory.objects.filter(main_category_id = main_category.id).values('id')
-            
-            sub_id = []
+        product_groups = ProductGroup.objects.all()
 
-            for sub_category_id_list in sub_category_id_main_category:
-                sub_id.append(sub_category_id_list['id'])
-                
+        if main_category_id:
+            product_groups.filter(sub_category__main_category_id=main_category_id)
 
-            result = [{
-                'name' : main_category_filter.name,
-            } for main_category_filter in OriginProduct.objects.filter(sub_category_id__in=sub_id)]
+        if featured_id:
+            product_groups.filter(featuredproducts__featured_id=featured_id)
 
-            
-            return JsonResponse({"message": result}, status=200)
+        results = [{
+            'id'                  : product_group.id,
+            'name'                : product_group.name,
+            'thumbnail_image_url' : product_group.thumbnail_image_url,
+            'rate_count'          : product_group.rate_count,
+            'review_count'        : product_group.review_count,
+            'sold_count'          : product_group.sold_count,
+        } for product_group in product_groups]
 
-        if 'featured' in kwargs.keys() :
-            kwargs_value = kwargs['featured']
-            featured_name = FeaturedName.objects.get(space_name = kwargs_value)
-            featured_products_list = FeaturedProducts.objects.filter(featured_id = featured_name.id).values('product_origin_id')
-            
-            orig_pro_id = []
-
-            for i in featured_products_list:
-                orig_pro_id.append(i['product_origin_id'])
-
-            print (orig_pro_id)
-
-            result_featured = [
-                {
-                    'id' : origin_products.id,
-                    'name' : origin_products.name,
-                } for origin_products in OriginProduct.objects.filter(id__in = orig_pro_id)
-            ]
-
-        
-            return JsonResponse({"message": result_featured}, status=200)
+        return JsonResponse({"results": results}, status=200)
 
 
+from django.models.db import Q
 
-        else :
-            
-            
+class ProductGroupListView(View):
+    def get(self, request):
+        main_category_id = int(request.GET.get('main_category_id'))
+        featured_id      = int(request.GET.get('featured_id'))
 
-            product_main_all_list = [
-                {
-                    'id' : origin_product.id,
-                    'name' : origin_product.name,
-                    'thumbnail_image_url' : origin_product.thumbnail_image_url,
-                    'rate_count' : origin_product.rate_count,
-                    'review_count' : origin_product.review_count,
-                    'sold_count' : origin_product.sold_count,
-                } for origin_product in OriginProduct.objects.all()
-            ]
-            
-            return JsonResponse({"message": product_main_all_list}, status=200)
+        q = Q()
+
+        if main_category_id:
+            q &= Q(sub_category__main_category_id=main_category_id)
+
+        if featured_id:
+            q &= Q(featuredproducts__featured_id=featured_id)
+
+        product_groups = ProductGroup.objects.filter(q)
+
+        results = [{
+            'id'                  : product_group.id,
+            'name'                : product_group.name,
+            'thumbnail_image_url' : product_group.thumbnail_image_url,
+            'rate_count'          : product_group.rate_count,
+            'review_count'        : product_group.review_count,
+            'sold_count'          : product_group.sold_count,
+        } for product_group in product_groups]
+
+
+        return JsonResponse({"results": results}, status=200)

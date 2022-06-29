@@ -1,7 +1,7 @@
 from django.db import models
 from products.models import OriginProduct
 
-class FeaturedName(models.Model):
+class Featured(models.Model):
     name = models.CharField(max_length=200)
     space_name = models.CharField(max_length=100)
     
