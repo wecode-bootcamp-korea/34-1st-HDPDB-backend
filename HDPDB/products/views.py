@@ -1,50 +1,41 @@
 import json, bcrypt, jwt, re, datetime
-from django.template import Origin
-from unittest import result
-from unicodedata import name
 
-from django.http     import JsonResponse, HttpResponse
-from json.decoder    import JSONDecodeError
-from django.views    import View
-from django.conf     import settings
-import products
-import featured
+from django.http      import JsonResponse, HttpResponse
+from django.views     import View
+from django.conf      import settings
+from django.models.db import Count
 
-from products.models import MainCategory, SubCategory, OriginProduct, Product, ProductOption, ProductImage
+from products.models import MainCategory, SubCategory, ProductGroup
 from featured.models import FeaturedName, FeaturedProducts
-from core.decorator  import login_decorator
+from core.decorator  import login_required
         
 
-class ProductDetailView(View):
-    def get(self, request, origin_product_id):
-        
+class ProductGroupView(View):
+    def get(self, request, product_group_id):
+        product_group = ProductGroup.objects.annotate(total_review_count = Count('reviews__id')) \
+            .prefetch_related('products', 'options') \
+            .get(id = product_group_id)
 
-        origin_product = OriginProduct.objects.get(id = origin_product_id)
-        product = Product.objects.filter(origin_product_id = origin_product.id)
-        #product_image = list(ProductImage.objects.filter(origin_product_id = origin_product.id))
-
-
-
-        product_information = {
-            'name' : origin_product.name,
-            #'imageset' : product_image.url,
-            'overview' : origin_product.overview,
-            'detail' : origin_product.detail,
-            'rate_count' : origin_product.rate_count,
-            'review_count' : origin_product.review_count,
-            'product_info' : [
+        result = {
+            'name'         : product_group.name,
+            'images'       : list(product_group.images.values('url')),
+            'overview'     : product_group.overview,
+            'detail'       : product_group.detail,
+            'rate_count'   : product_group.rate_count,
+            'review_count' : product_group.total_review_count,
+            'products'     : [
                 {
-                    'product_id' : product_info.id,
-                    'stock' : product_info.stock,
-                    'price' : product_info.price,
-                    'product_option' : [{
+                    'id' : product.id,
+                    'stock' : product.stock,
+                    'price' : product.price,
+                    'product_options' : [{
                         'name' : product_option.name,
                         'type' : product_option.type
-                        } for product_option in ProductOption.objects.filter(product_id = product_info.id)],
-                } for product_info in product ]
-                
-            }
-        return JsonResponse({"message": product_information}, status=200)
+                        } for product_option in product.options.all()],
+                } for product in product_group.products.all()]
+        }
+
+        return JsonResponse({"result": result}, status=200)
 
 class MainPageView(View):
     def get(self, request, **kwargs):

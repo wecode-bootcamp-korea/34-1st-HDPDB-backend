@@ -18,22 +18,31 @@ class SubCategory(models.Model):
     class Meta:
         db_table = 'sub_categories'
 
-class OriginProduct(models.Model):
+class ProductGroup(models.Model):
     name                = models.CharField(max_length=100, unique=True)
     sub_category        = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     thumbnail_image_url = models.URLField(null = True)
     overview            = models.CharField(max_length=350)
     detail              = models.TextField(null=True)
     maker               = models.CharField(max_length=30)
-    rate_count          = models.IntegerField(null=True)
-    review_count        = models.IntegerField(null=True)
-    sold_count          = models.IntegerField(null=True)
+    # rate_count          = models.IntegerField(default=0)
+    # review_count        = models.IntegerField(default=0)
+    # sold_count          = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'origin_products'
 
+class Review(models.Model):
+    content = models.TextField()
+    rating  = models.IntegerField(default=0)
+    user    = models.ForeignKey('User')
+
+    class Meta:
+        db_table = 'reviews'
+
+
 class Product(models.Model):
-    origin_product = models.ForeignKey(OriginProduct, on_delete=models.CASCADE)
+    product_group = models.ForeignKey(OriginProduct, on_delete=models.CASCADE, related_name="products")
     stock          = models.IntegerField(default=0)
     price          = models.IntegerField(default=0)
 
@@ -41,7 +50,7 @@ class Product(models.Model):
         db_table = 'products'
 
 class ProductOption(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="options")
     name    = models.CharField(max_length=50)
     type    = models.CharField(max_length=50)
     stock   = models.IntegerField(default=0)
@@ -50,7 +59,7 @@ class ProductOption(models.Model):
         db_table = 'product_options'
 
 class ProductImage(models.Model):
-    origin_product = models.ForeignKey(OriginProduct, on_delete=models.CASCADE)
+    origin_product = models.ForeignKey(OriginProduct, on_delete=models.CASCADE, related_name="images")
     url     = models.CharField(max_length=1000)
 
     class Meta:
