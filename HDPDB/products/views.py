@@ -1,43 +1,75 @@
 import json, bcrypt, jwt, re, datetime
-from unittest import result
-from unicodedata import name
 
-from django.http     import JsonResponse, HttpResponse
-from json.decoder    import JSONDecodeError
-from django.views    import View
-from django.conf     import settings
-import products
+from django.http      import JsonResponse, HttpResponse
+from django.views     import View
+from django.conf      import settings
+from django.db.models import Q
+from numpy import product
 
-from products.models import MainCategory, SubCategory, OriginProduct, Product, ProductOption, ProductImage
-from core.decorator      import login_decorator
+from products.models import Category, ProductGroup, Product, ProductOption, ProductImage
+from featured.models import Featured, FeaturedProducts
+from core.decorator  import login_required
 
-class ProductDetailView(View):
-    def get(self, request, origin_product_id):
+
+class ProductGroupView(View):
+    def get(self, request, product_group_id):
+        product_group = ProductGroup.objects.all() \
+            .prefetch_related('products', 'products__options', 'products__discounts') \
+            .get(id = product_group_id)
+
+        result = {
+            'name'         : product_group.name,
+            'images'       : list(product_group.images.values('url')),
+            'overview'     : product_group.overview,
+            'detail'       : product_group.detail,
+            'rate_count'   : product_group.rate_count,
+            'review_count' : product_group.review_count,
+            'products'     : [
+                {
+                    'id' : product.id,
+                    'stock' : product.stock,
+                    'price' : product.price,
+                    'discount_price' : product.discount_price,
+                    'product_options' : [{
+                        'id'   : product_option.id,
+                        'name' : product_option.name,
+                        'type' : product_option.type,
+                        } for product_option in product.options.all()],
+                } for product in product_group.products.all()]
+        } 
+
+        return JsonResponse({"result": result}, status=200)
+
+
+class ProductGroupListView(View):
+        # GET :8000/product_groups?category_id=1
+        # GET :8000/product_groups?featured_id=1
+        # GET :8000/product_groups?main_category_id=1&featured_id=1
+        
+    def get(self, request):
+        category_id = request.GET.get('category_id')
+        featured_id = request.GET.get('featured_id')
+
+        q = Q()
+
+        if category_id:
+            q &= Q(category_id=category_id)
+
+        if featured_id:
+            q &= Q(featured_products__featured_id=featured_id)
+
+        product_groups = ProductGroup.objects.filter(q) \
+            .prefetch_related('products')
         
 
-        origin_product = OriginProduct.objects.get(id = origin_product_id)
-        product = Product.objects.filter(origin_product_id = origin_product.id)
-        product_image = list(ProductImage.objects.filter(origin_product_id = origin_product.id))
-        sub_category = SubCategory.objects.get(id = origin_product.sub_category_id)
-        main_category = MainCategory.objects.get(id = sub_category.main_category_id)
+        results = [{
+            'id'                  : product_group.id,
+            'name'                : product_group.name,
+            'thumbnail_image_url' : product_group.thumbnail_image_url,
+            'rate_count'          : product_group.rate_count,
+            'review_count'        : product_group.review_count,
+            'sold_count'          : product_group.sold_count,
+            'price'               : product_group.products.first().price
+        } for product_group in product_groups]
 
-        product_information = {
-            'name' : origin_product.name,
-            'imageset' : product_image.url,
-            'overview' : origin_product.overview,
-            'detail' : origin_product.detail,
-            'rate_count' : origin_product.rate_count,
-            'review_count' : origin_product.review_count,
-            'product_info' : [
-                {
-                    'product_id' : product_info.id,
-                    'stock' : product_info.stock,
-                    'price' : product_info.price,
-                    'product_option' : [{
-                        'name' : product_option.name,
-                        'type' : product_option.type
-                        } for product_option in ProductOption.objects.filter(product_id = product_info.id)],
-                } for product_info in product ]
-                
-            }
-        return JsonResponse({"message": product_information}, status=200)
+        return JsonResponse({"results": results}, status=200)
