@@ -42,9 +42,6 @@ class ProductGroupView(View):
 
 
 class ProductGroupListView(View):
-        # GET :8000/product_groups?category_id=1
-        # GET :8000/product_groups?featured_id=1
-        # GET :8000/product_groups?main_category_id=1&featured_id=1
         
     def get(self, request):
         category_id = request.GET.get('category_id')
