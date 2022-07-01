@@ -6,7 +6,7 @@ from HDPDB.settings import SECRET_KEY
 from users.models import User
 
 
-def login_decorator(func):
+def login_required(func):
     def wrapper(self, request, *args, **kwargs):
         try:
             access_token = request.headers.get('Authorization', None)
