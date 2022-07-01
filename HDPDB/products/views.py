@@ -3,6 +3,7 @@ import json, bcrypt, jwt, re, datetime
 from django.http      import JsonResponse, HttpResponse
 from django.views     import View
 from django.conf      import settings
+
 from django.db.models import Q
 from numpy import product
 
@@ -15,6 +16,7 @@ class ProductGroupView(View):
     def get(self, request, product_group_id):
         product_group = ProductGroup.objects.all() \
             .prefetch_related('products', 'products__options', 'products__discounts') \
+
             .get(id = product_group_id)
 
         result = {
@@ -23,7 +25,9 @@ class ProductGroupView(View):
             'overview'     : product_group.overview,
             'detail'       : product_group.detail,
             'rate_count'   : product_group.rate_count,
+
             'review_count' : product_group.review_count,
+
             'products'     : [
                 {
                     'id' : product.id,
@@ -61,7 +65,6 @@ class ProductGroupListView(View):
         product_groups = ProductGroup.objects.filter(q) \
             .prefetch_related('products')
         
-
         results = [{
             'id'                  : product_group.id,
             'name'                : product_group.name,
