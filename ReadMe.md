@@ -41,7 +41,7 @@
 
 ```python
 통신 에러를 피하기 위해 모튼 요청은 api 로 전송 되어야함
-(host)/api
+(METHOD) (host)/api
 ```
 
 ### Cart Request
